@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Soru Çözümü</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/soru.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Soru Çözümü (Görsel)</h1>
+
+        <form id="image-form" enctype="multipart/form-data">
+            <label for="photo">📷 Fotoğraf Yükle:</label>
+            <input type="file" id="photo" name="photo" accept="image/*" required>
+            <button type="submit" class="btn">Fotoğrafı Gönder</button>
+        </form>
+
+        <div id="image-result-box" class="ai-box">
+            <h3>AI Görsel Yanıtı:</h3>
+            <pre id="image-result">Henüz bir fotoğraf yüklenmedi.</pre>
+        </div>
+
+        <a href="/" class="btn">🏠 Anasayfaya Dön</a>
+    </div>
+</body>
+</html>

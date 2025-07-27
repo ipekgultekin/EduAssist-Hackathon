@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Eksik Tespiti</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/main.js" defer></script>
+    <script src="/static/eksik.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Eksik Tespiti</h1>
+        <form id="eksik-form">
+            <label for="topic">Konu:</label>
+            <input type="text" id="topic" name="topic" required>
+
+            <label for="lang">Dil Seçin:</label>
+            <select id="lang" name="lang">
+                <option value="Türkçe">Türkçe</option>
+                <option value="İngilizce">İngilizce</option>
+            </select>
+
+            <button type="submit" class="btn">Eksik Alanları Tespit Et</button>
+        </form>
+
+        <div id="result-box" class="ai-box">
+            <h3>AI Sınaması:</h3>
+            <div id="ai-result">Henüz bir şey girilmedi.</div>
+        </div>
+
+        <a href="/" class="btn">🏠 Anasayfaya Dön</a>
+    </div>
+</body>
+</html>
