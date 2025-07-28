@@ -11,6 +11,8 @@
 <body>
     <div class="container">
         <h1>🔍 Eksik Tespiti</h1>
+
+        <!-- Başlangıç Formu -->
         <form id="eksik-form">
             <label for="topic">Konu:</label>
             <input type="text" id="topic" name="topic" required>
@@ -21,15 +23,22 @@
                 <option value="İngilizce">İngilizce</option>
             </select>
 
-            <button type="submit" class="btn">Eksik Alanları Tespit Et</button>
+            <button type="submit" class="btn">Teste Başla</button>
         </form>
 
-        <div id="result-box" class="ai-box">
-            <h3>AI Sınaması:</h3>
-            <div id="ai-result">Henüz bir şey girilmedi.</div>
+        <!-- Soru-Cevap Kutusu -->
+        <div id="qa-box" class="ai-box" style="display:none;">
+            <h3>Soru-Cevap:</h3>
+            <div id="question"></div>
+            <textarea id="user-answer" rows="3" placeholder="Cevabınızı yazın"></textarea>
+            <button id="answer-btn" class="btn">Cevabı Gönder</button>
+            <div id="feedback" style="margin-top: 10px;"></div>
         </div>
 
-        <a href="/" class="btn">🏠 Anasayfaya Dön</a>
+        <!-- Test Sonu Butonu -->
+        <div id="summary-actions" style="margin-top: 20px; display: none; text-align: center;">
+            <a href="/" class="btn">🏠 Anasayfaya Dön</a>
+        </div>
     </div>
 </body>
 </html>
