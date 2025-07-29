@@ -2,34 +2,412 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Konu Anlatımı</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konu Anlatımı - EduAssist</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="/static/main.js" defer></script>
-    <script src="/static/konu.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Form Card */
+        .form-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Result Box */
+        .result-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 200px;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .result-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .result-content {
+            color: #34495e;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .result-content.empty {
+            color: #7f8c8d;
+            font-style: italic;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                order: -1;
+            }
+            
+            .container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+            
+            .form-card, .result-card {
+                padding: 25px 20px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                🎓 EduAssist
+            </div>
+            <div class="nav-links">
+                <a href="/index" class="nav-link">🏠 Ana Sayfa</a>
+                <a href="/konu" class="nav-link active">📘 Konu Anlatımı</a>
+                <a href="/soru" class="nav-link">🧠 Soru Çözümü</a>
+                <a href="/eksik" class="nav-link">🔍 Durum Tespiti</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
     <div class="container">
-        <h1>📚 Konu Anlatımı</h1>
-        <form id="topic-form">
-            <label for="topic">Konu Başlığı:</label>
-            <input type="text" id="topic" name="topic" placeholder="Örn: Kütlenin Korunumu" required>
-
-            <label for="lang">Dil Seçin:</label>
-            <select id="lang" name="lang">
-                <option value="Türkçe">Türkçe</option>
-                <option value="İngilizce">İngilizce</option>
-            </select>
-
-            <button type="submit" class="btn">Anlatımı Getir</button>
-        </form>
-
-        <div id="result-box" class="ai-box">
-            <h3>AI Anlatımı:</h3>
-            <div id="ai-result">Henüz bir şey girilmedi.</div>
+        <div class="page-header">
+            <h1 class="page-title">📚 Konu Anlatımı</h1>
+            <p class="page-subtitle">AI destekli detaylı konu anlatımlarıyla öğrenin</p>
         </div>
 
-        <a href="/" class="btn">🏠 Anasayfaya Dön</a>
+        <div class="form-card">
+            <form id="topic-form">
+                <div class="form-group">
+                    <label for="topic">🎯 Konu Başlığı:</label>
+                    <input type="text" id="topic" name="topic" placeholder="Örn: Kütlenin Korunumu, İntegral Hesaplama, Osmanlı Devleti..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lang">🌍 Dil Seçin:</label>
+                    <select id="lang" name="lang">
+                        <option value="Türkçe">Türkçe</option>
+                        <option value="İngilizce">İngilizce</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-full">
+                    ✨ Anlatımı Getir
+                </button>
+            </form>
+        </div>
+
+        <div class="result-card">
+            <div class="result-header">
+                <span>🤖</span>
+                <h3 class="result-title">AI Anlatımı</h3>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>AI anlatımınızı hazırlıyor...</p>
+            </div>
+            
+            <div id="ai-result" class="result-content empty">
+                Henüz bir konu girilmedi. Yukarıdaki formu kullanarak öğrenmek istediğiniz konuyu yazın.
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="/index" class="btn btn-secondary">🏠 Ana Sayfaya Dön</a>
+            <a href="/soru" class="btn">🧠 Soru Çözümüne Git</a>
+        </div>
     </div>
+
+    <script>
+        document.getElementById('topic-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const topic = document.getElementById('topic').value;
+            const lang = document.getElementById('lang').value;
+            const resultDiv = document.getElementById('ai-result');
+            const loading = document.getElementById('loading');
+            
+            // Show loading
+            loading.classList.add('show');
+            resultDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/konu', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ topic: topic, lang: lang })
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading
+                loading.classList.remove('show');
+                resultDiv.style.display = 'block';
+                
+                if (data.success) {
+                    resultDiv.innerHTML = marked.parse(data.explanation);
+                    resultDiv.classList.remove('empty');
+                } else {
+                    resultDiv.innerHTML = 'Bir hata oluştu: ' + data.error;
+                    resultDiv.classList.add('empty');
+                }
+            } catch (error) {
+                // Hide loading
+                loading.classList.remove('show');
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = 'Bağlantı hatası oluştu. Lütfen tekrar deneyin.';
+                resultDiv.classList.add('empty');
+            }
+        });
+
+        // Add some interactivity
+        document.getElementById('topic').addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'transform 0.3s ease';
+        });
+
+        document.getElementById('topic').addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    </script>
 </body>
 </html>

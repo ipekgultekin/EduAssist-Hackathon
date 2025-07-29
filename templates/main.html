@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAssist - AI Destekli Eğitim Asistanı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23ffffff10" points="0,1000 1000,0 1000,1000"/></svg>');
+            background-size: cover;
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 60%; left: 80%; animation-delay: 1s; }
+        .floating-icon:nth-child(3) { top: 80%; left: 20%; animation-delay: 2s; }
+        .floating-icon:nth-child(4) { top: 30%; left: 70%; animation-delay: 3s; }
+        .floating-icon:nth-child(5) { top: 70%; left: 90%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            z-index: 2;
+            position: relative;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: slideUp 1s ease 0.5s forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            opacity: 0;
+            animation: slideUp 1s ease 0.7s forwards;
+            font-weight: 300;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            animation: slideUp 1s ease 0.9s forwards;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: slideUp 1s ease 1.1s forwards;
+        }
+
+        .btn-hero {
+            padding: 18px 35px;
+            font-size: 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-white {
+            background: white;
+            color: #667eea;
+            border: none;
+        }
+
+        .btn-white:hover {
+            background: #f8f9fa;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline-white {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline-white:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: linear-gradient(to bottom, #f8f9fa, white);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f3f4;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .cta-description {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #4ecdc4;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-buttons {
+                display: none;
+            }
+            
+            .stats {
+                gap: 30px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                🎓 EduAssist
+            </div>
+            <div class="nav-buttons">
+                <a href="/auth" class="btn btn-outline">Giriş Yap</a>
+                <a href="/auth" onclick="setRegisterTab()" class="btn btn-primary">Kayıt Ol</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-elements">
+            <div class="floating-icon">📚</div>
+            <div class="floating-icon">🧠</div>
+            <div class="floating-icon">⚡</div>
+            <div class="floating-icon">🎯</div>
+            <div class="floating-icon">✨</div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">Eğitimde Yeni Dönem</h1>
+            <h2 class="hero-subtitle">AI Destekli Kişisel Eğitim Asistanınız</h2>
+            <p class="hero-description">
+                Eksik konularınızı keşfedin, güçlü yanlarınızı geliştirin. 
+                Yapay zeka destekli EduAssist ile eğitiminizi kişiselleştirin 
+                ve başarıya ulaşmanın en hızlı yolunu keşfedin.
+            </p>
+            <div class="hero-buttons">
+                <a href="/auth" onclick="setRegisterTab()" class="btn btn-white btn-hero">
+                    🚀 Hemen Başla
+                </a>
+                <a href="#features" class="btn btn-outline-white btn-hero">
+                    📖 Nasıl Çalışır?
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title fade-in-up">Neden EduAssist?</h2>
+            <p class="section-subtitle fade-in-up">
+                Yapay zeka teknolojisi ile eğitimde fark yaratın. 
+                Kişisel öğrenme deneyiminizi bir üst seviyeye taşıyın.
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in-up">
+                    <span class="feature-icon">🎯</span>
+                    <h3 class="feature-title">Kişisel Analiz</h3>
+                    <p class="feature-description">
+                        AI teknolojisi ile eksik konularınızı tespit eder, 
+                        güçlü yanlarınızı belirler ve size özel öğrenme planı oluşturur.
+                    </p>
+                </div>
+                
+                <div class="feature-card fade-in-up">
+                    <span class="feature-icon">📚</span>
+                    <h3 class="feature-title">Akıllı İçerik</h3>
+                    <p class="feature-description">
+                        Seviyenize uygun sorular, interaktif dersler ve 
+                        anlık geri bildirimlerle etkili öğrenme deneyimi yaşayın.
+                    </p>
+                </div>
+                
+                <div class="feature-card fade-in-up">
+                    <span class="feature-icon">⚡</span>
+                    <h3 class="feature-title">Hızlı Gelişim</h3>
+                    <p class="feature-description">
+                        Gerçek zamanlı performans takibi ile ilerlemenizi görün, 
+                        motivasyonunuzu yüksek tutun ve hedeflerinize ulaşın.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2 class="cta-title fade-in-up">Eğitimde Geleceği Bugün Yaşayın</h2>
+            <p class="cta-description fade-in-up">
+                Binlerce öğrenci zaten EduAssist ile başarıya ulaştı. 
+                Siz de bu başarı hikayesinin bir parçası olun. Hedefimiz:
+            </p>
+            
+            <div class="stats fade-in-up">
+                <div class="stat">
+                    <span class="stat-number" data-count="15000">0</span>
+                    <div class="stat-label">Aktif Öğrenci</div>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-count="98">0</span>
+                    <div class="stat-label">% Memnuniyet</div>
+                </div>
+                <div class="stat">
+                    <span class="stat-number" data-count="250">0</span>
+                    <div class="stat-label">Konu Alanı</div>
+                </div>
+            </div>
+            
+            <div class="hero-buttons fade-in-up">
+                <a href="/auth" onclick="setRegisterTab()" class="btn btn-white btn-hero">
+                    ✨ Ücretsiz Başla
+                </a>
+                <a href="/auth" class="btn btn-outline-white btn-hero">
+                    🔑 Giriş Yap
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 EduAssist. Tüm hakları saklıdır. 🎓</p>
+            <p style="margin-top: 10px; opacity: 0.7;">
+                Eğitimde AI devrimi ile geleceği şekillendiriyoruz.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current) + (target === 98 ? '%' : '');
+            }, 20);
+        }
+
+        // Start counter animation when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('.stat-number');
+                    counters.forEach(counter => {
+                        const target = parseInt(counter.getAttribute('data-count'));
+                        animateCounter(counter, target);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        });
+
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Header background on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Set register tab function
+        function setRegisterTab() {
+            localStorage.setItem('activeTab', 'register');
+        }
+    </script>
+</body>
+</html>
