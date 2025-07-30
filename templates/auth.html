@@ -367,6 +367,18 @@
                 this.parentElement.style.transform = 'translateY(0)';
             });
         });
+
+        // Sayfa yüklendiğinde URL parametresine göre sekmeyi ayarla
+        window.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const tab = params.get("tab");
+
+            if (tab === "register") {
+                switchTab("register");
+            } else {
+                switchTab("login");
+            }
+        });
     </script>
 </body>
 </html>

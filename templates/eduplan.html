@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ders Programı Planlayıcı - EduAssist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Chat Container */
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .chat-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* Chat Box */
+        .chat-box {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 15px;
+            animation: slideIn 0.3s ease-out;
+            max-width: 85%;
+        }
+
+        .chat-message.ai {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            color: #1565c0;
+            margin-right: auto;
+        }
+
+        .chat-message.user {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border: 2px solid #9c27b0;
+            color: #6a1b9a;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message-sender {
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Input Section */
+        .input-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            max-width: 85%;
+            color: #666;
+            font-style: italic;
+        }
+
+        .typing-indicator.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .typing-dots {
+            display: inline-block;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots:nth-child(1) { animation-delay: 0.0s; }
+        .typing-dots:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { opacity: 0.3; }
+            40% { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 15px;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                order: -1;
+            }
+            
+            .container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+            
+            .chat-container {
+                padding: 25px 20px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .input-section {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                🎓 EduAssist
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">🏠 Ana Sayfa</a>
+                <a href="/konu" class="nav-link">📘 Konu Anlatımı</a>
+                <a href="/soru" class="nav-link">🧠 Soru Çözümü</a>
+                <a href="/eksik" class="nav-link">🔍 Durum Tespiti</a>
+                <a href="/planlayici" class="nav-link active">🌐 Ders Planlayıcı</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">🌐 AI Ders Programı Planlayıcı</h1>
+            <p class="page-subtitle">Hedefinizi söyleyin, AI size özel ders planı oluştursun</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <span>🤖</span>
+                <h3 class="chat-title">AI Planlayıcı Asistanı</h3>
+            </div>
+            
+            <div class="chat-box" id="chat-box">
+                <div class="chat-message ai">
+                    <div class="message-sender">🤖 AI Asistan</div>
+                    <div class="message-content">
+                        Merhaba! 🎯 Hedefinizi ve sürenizi söyleyin, size özel ders planı hazırlayayım. 
+                        <br><br>
+                        <strong>Örnek:</strong> "3 haftada TYT Matematik bitirmem lazım" veya "2 ayda İngilizce seviyemi yükseltmek istiyorum"
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typing-indicator">
+                🤖 AI planınızı hazırlıyor<span class="typing-dots">.</span><span class="typing-dots">.</span><span class="typing-dots">.</span>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" class="chat-input" id="user-input" 
+                       placeholder="Örn: 3 haftada TYT Matematik bitirmem lazım" 
+                       onkeypress="handleKeyPress(event)">
+                <button class="send-btn" id="send-btn" onclick="sendMessage()">
+                    📤 Gönder
+                </button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="downloadPDF()">
+                    📄 PDF İndir
+                </button>
+                <button class="action-btn" onclick="newPlan()">
+                    🔄 Yeni Plan
+                </button>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="/" class="btn-secondary">🏠 Ana Sayfaya Dön</a>
+            <a href="/forum" class="btn-secondary">🧑‍🤝‍🧑 Foruma Git</a>
+        </div>
+    </div>
+
+    <script>
+        let messageCount = 0;
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("user-input");
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatBox = document.getElementById("chat-box");
+            const sendBtn = document.getElementById("send-btn");
+            const typingIndicator = document.getElementById("typing-indicator");
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-message user';
+            userMessage.innerHTML = `
+                <div class="message-sender">👤 Sen</div>
+                <div class="message-content">${message}</div>
+            `;
+            chatBox.appendChild(userMessage);
+            
+            // Clear input and disable button
+            input.value = "";
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '⏳ Gönderiliyor...';
+            
+            // Show typing indicator
+            typingIndicator.classList.add('show');
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Simulate AI response
+            setTimeout(() => {
+                typingIndicator.classList.remove('show');
+                
+                const aiResponse = generateAIResponse(message);
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'chat-message ai';
+                aiMessage.innerHTML = `
+                    <div class="message-sender">🤖 AI Asistan</div>
+                    <div class="message-content">${aiResponse}</div>
+                `;
+                chatBox.appendChild(aiMessage);
+                
+                // Re-enable button
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '📤 Gönder';
+                
+                chatBox.scrollTop = chatBox.scrollHeight;
+                messageCount++;
+            }, 2000 + Math.random() * 1000);
+        }
+
+        function generateAIResponse(userMessage) {
+            const responses = [
+                `🎯 Harika! "${userMessage}" hedefin için detaylı bir plan hazırladım:<br><br>
+                📅 <strong>1. Hafta:</strong><br>
+                • Gün 1-2: Temel kavramlar + 10 soru<br>
+                • Gün 3-4: Uygulama soruları + 15 soru<br>
+                • Gün 5-7: Pekiştirme + 20 soru<br><br>
+                📊 Günlük 2 saat çalışman yeterli olacak!`,
+                
+                `✨ Mükemmel hedef! İşte senin için özel plan:<br><br>
+                📚 <strong>Bu Hafta:</strong><br>
+                • ${Math.floor(Math.random() * 5 + 10)} soru çöz<br>
+                • ${Math.floor(Math.random() * 3 + 2)} konu tekrarı yap<br>
+                • ${Math.floor(Math.random() * 2 + 1)} deneme sınavı<br><br>
+                🎯 Hedefine ulaşman için günde ${Math.floor(Math.random() * 2 + 2)} saat yeterli!`,
+                
+                `🚀 Süper! Hedefiniz çok net. Size özel program:<br><br>
+                📈 <strong>İlerleme Planı:</strong><br>
+                • İlk 10 gün: Temel düzey<br>
+                • Sonraki 10 gün: Orta düzey<br>
+                • Son 10 gün: İleri düzey<br><br>
+                💪 Bu tempoda devam edersen başarılı olacaksın!`
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function downloadPDF() {
+            if (messageCount === 0) {
+                alert("🤔 Henüz bir plan oluşturulmadı. Önce hedefinizi söyleyin!");
+                return;
+            }
+            alert("📄 PDF indirme özelliği yakında eklenecek!");
+        }
+
+        function newPlan() {
+            const chatBox = document.getElementById("chat-box");
+            const input = document.getElementById("user-input");
+            
+            // Clear chat except first message
+            const firstMessage = chatBox.querySelector('.chat-message.ai');
+            chatBox.innerHTML = '';
+            chatBox.appendChild(firstMessage);
+            
+            input.value = '';
+            messageCount = 0;
+            
+            // Add new plan message
+            setTimeout(() => {
+                const newMessage = document.createElement('div');
+                newMessage.className = 'chat-message ai';
+                newMessage.innerHTML = `
+                    <div class="message-sender">🤖 AI Asistan</div>
+                    <div class="message-content">🔄 Yeni plan hazırlamaya başlayalım! Yeni hedefinizi ve sürenizi söyleyin.</div>
+                `;
+                chatBox.appendChild(newMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 500);
+        }
+
+        // Add some interactivity
+        document.getElementById('user-input').addEventListener('focus', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+
+        document.getElementById('user-input').addEventListener('blur', function() {
+            this.style.transform = 'scale(1)';
+        });
+    </script>
+</body>
+</html>

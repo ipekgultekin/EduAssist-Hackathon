@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
+from fastapi import Response
 from models.user import User
 from sqlalchemy.orm import Session
 from database import SessionLocal
+
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -63,3 +65,7 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
 def profile_page(request: Request):
     return templates.TemplateResponse("profile.html", {"request": request})
 
+@router.get("/logout")
+def logout_user(response: Response):
+    response.delete_cookie("user_id")
+    return RedirectResponse(url="/", status_code=302) 

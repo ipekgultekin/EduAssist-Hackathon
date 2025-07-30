@@ -9,8 +9,10 @@ import requests
 import base64
 from dotenv import load_dotenv
 from models.user import User
-from database import Base, engine
-from routers import user_routes
+from database import Base, engine, SessionLocal
+from routers import user_routes, eduplan_routes
+from models.user import User
+
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -30,7 +32,7 @@ templates = Jinja2Templates(directory="templates")
 
 app.include_router(ai_routes.router)
 app.include_router(user_routes.router)
-
+app.include_router(eduplan_routes.router)
 
 @app.get("/", response_class=HTMLResponse)
 async def main_page(request: Request):
@@ -38,7 +40,17 @@ async def main_page(request: Request):
 
 @app.get("/index", response_class=HTMLResponse)
 async def index_page(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    user_id = request.cookies.get("user_id")
+    user_name = "Kullanıcı"
+
+    if user_id:
+        db = SessionLocal()
+        user = db.query(User).filter(User.id == user_id).first()
+        if user:
+            user_name = user.fullname  
+        db.close()
+
+    return templates.TemplateResponse("index.html", {"request": request, "user_name": user_name})
 
 @app.get("/konu", response_class=HTMLResponse)
 async def konu_page(request: Request):
@@ -51,6 +63,11 @@ async def soru_page(request: Request):
 @app.get("/eksik", response_class=HTMLResponse)
 async def eksik_page(request: Request):
     return templates.TemplateResponse("eksik.html", {"request": request})
+
+@app.get("/eduplan", response_class=HTMLResponse)
+async def eduplan_page(request: Request):
+    return templates.TemplateResponse("eduplan.html", {"request": request})
+
 
 Base.metadata.create_all(bind=engine)
 
