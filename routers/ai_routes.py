@@ -1,5 +1,6 @@
 from fastapi import APIRouter, UploadFile, File
 from models.schemas import EducationRequest
+from fastapi.responses import JSONResponse
 import os
 import requests
 from dotenv import load_dotenv
@@ -68,3 +69,59 @@ def educational_response(data: EducationRequest):
 
     except Exception as e:
         return {"error": "AI response error", "raw": result}
+
+
+@router.post("/image-question")
+async def solve_image_question(photo: UploadFile = File(...)):
+    # Görseli oku ve base64'e çevir
+    image_bytes = await photo.read()
+    encoded_image = base64.b64encode(image_bytes).decode('utf-8')
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    params = {
+        "key": GEMINI_API_KEY
+    }
+
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "inline_data": {
+                            "mime_type": photo.content_type,
+                            "data": encoded_image
+                        }
+                    },
+                    {
+                        "text": "Bu görseldeki soruyu çöz ve detaylı bir şekilde açıklayıcı cevap ver. Türkçe yaz."
+                    }
+                ]
+            }
+        ]
+    }
+
+    response = requests.post(
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
+        headers=headers,
+        params=params,
+        json=payload
+    )
+
+    result = response.json()
+    print("Gemini response:", result)  # 🔍 buraya eklenecek
+
+    try:
+        ai_text = result["candidates"][0]["content"]["parts"][0]["text"]
+        return {"success": True, "solution": ai_text}
+    except Exception as e:
+        print("AI çözüm parse edilemedi:", e)
+        print("Orijinal Gemini sonucu:", result)
+        return {
+            "success": False,
+            "error": "AI response error",
+            "raw": result
+        }
+

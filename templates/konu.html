@@ -354,60 +354,9 @@
             <a href="/soru" class="btn">🧠 Soru Çözümüne Git</a>
         </div>
     </div>
+    <script src="/static/main.js" defer></script>
+    <script src="/static/konu.js" defer></script>
 
-    <script>
-        document.getElementById('topic-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const topic = document.getElementById('topic').value;
-            const lang = document.getElementById('lang').value;
-            const resultDiv = document.getElementById('ai-result');
-            const loading = document.getElementById('loading');
-            
-            // Show loading
-            loading.classList.add('show');
-            resultDiv.style.display = 'none';
-            
-            try {
-                const response = await fetch('/api/konu', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ topic: topic, lang: lang })
-                });
-                
-                const data = await response.json();
-                
-                // Hide loading
-                loading.classList.remove('show');
-                resultDiv.style.display = 'block';
-                
-                if (data.success) {
-                    resultDiv.innerHTML = marked.parse(data.explanation);
-                    resultDiv.classList.remove('empty');
-                } else {
-                    resultDiv.innerHTML = 'Bir hata oluştu: ' + data.error;
-                    resultDiv.classList.add('empty');
-                }
-            } catch (error) {
-                // Hide loading
-                loading.classList.remove('show');
-                resultDiv.style.display = 'block';
-                resultDiv.innerHTML = 'Bağlantı hatası oluştu. Lütfen tekrar deneyin.';
-                resultDiv.classList.add('empty');
-            }
-        });
-
-        // Add some interactivity
-        document.getElementById('topic').addEventListener('focus', function() {
-            this.parentElement.style.transform = 'scale(1.02)';
-            this.parentElement.style.transition = 'transform 0.3s ease';
-        });
-
-        document.getElementById('topic').addEventListener('blur', function() {
-            this.parentElement.style.transform = 'scale(1)';
-        });
-    </script>
+  
 </body>
 </html>

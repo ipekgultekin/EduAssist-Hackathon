@@ -24,12 +24,13 @@ async function sendAIRequest(endpoint, payload, resultContainerId) {
 
         const data = await response.json();
 
-        if (data.response) {
-            resultEl.innerHTML = marked.parse(data.response); // Markdown desteği
-        } else {
-            resultEl.innerText = "Hata: " + (data.error || "Bilinmeyen bir sorun oluştu.");
-            console.error("Raw:", data.raw);
-        }
+        if (data.solution) {
+    resultEl.innerHTML = marked.parse(data.solution);
+    } else {
+    resultEl.innerText = "Hata: " + (data.error || "Bilinmeyen bir sorun oluştu.");
+    console.error("Raw:", data.raw);
+    }
+
     } catch (error) {
         console.error("Error:", error);
         resultEl.innerText = "İstek başarısız oldu.";

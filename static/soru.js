@@ -6,7 +6,7 @@ document.getElementById("image-form").addEventListener("submit", async function 
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("photo", file);  // ✅ ALAN ADI "photo" OLMALI
 
     try {
         const res = await fetch("/image-question", {
@@ -15,16 +15,15 @@ document.getElementById("image-form").addEventListener("submit", async function 
         });
 
         const data = await res.json();
-        const resultEl = document.getElementById("image-result");
+        const resultEl = document.getElementById("ai-result");
 
-        if (data.response) {
-            resultEl.innerText = data.response;
+        if (data.success) {
+            resultEl.innerHTML = marked.parse(data.solution);
         } else {
             resultEl.innerText = "Hata: " + (data.error || "Bilinmeyen bir sorun.");
-            console.error("Raw:", data.raw);
         }
     } catch (err) {
         console.error(err);
-        document.getElementById("image-result").innerText = "İstek başarısız oldu.";
+        document.getElementById("ai-result").innerText = "İstek başarısız oldu.";
     }
 });

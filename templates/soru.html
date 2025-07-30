@@ -518,7 +518,7 @@
             resultDiv.style.display = 'none';
             
             try {
-                const response = await fetch('/api/soru', {
+                const response = await fetch('/image-question', {
                     method: 'POST',
                     body: formData
                 });
@@ -555,5 +555,8 @@
             this.style.transform = 'translateY(0)';
         });
     </script>
+    <script src="/static/main.js" defer></script>
+    <script src="/static/soru.js" defer></script>
+
 </body>
 </html>

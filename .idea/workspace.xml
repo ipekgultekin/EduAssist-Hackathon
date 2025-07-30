@@ -6,11 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="65c0d1ef-6f4a-4db9-ab7d-4a9184540f8d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/schemas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routers/ai_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routers/ai_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/eksik.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/eksik.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/eksik.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/eksik.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/soru.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/soru.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/konu.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/konu.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/soru.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/soru.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +80,10 @@
       <workItem from="1753701529070" duration="41000" />
       <workItem from="1753701580151" duration="35000" />
       <workItem from="1753701623313" duration="299000" />
-      <workItem from="1753702125553" duration="1460000" />
+      <workItem from="1753702125553" duration="2270000" />
+      <workItem from="1753728603693" duration="552000" />
+      <workItem from="1753817696441" duration="190000" />
+      <workItem from="1753834965046" duration="1850000" />
     </task>
     <servers />
   </component>
