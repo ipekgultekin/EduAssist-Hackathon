@@ -4,41 +4,6 @@ EduAssist, öğrencilerin öğrenme sürecini kolaylaştırmak için geliştiril
 
 ---
 
-## 🚀 Projeyi Çalıştırma Adımları
-
-Aşağıdaki adımları izleyerek uygulamayı kendi bilgisayarınızda çalıştırabilirsiniz:
-
-### 1. 📦 Gerekli Paketleri İndirin
-
-İlk olarak sanal ortamı aktif edip bağımlılıkları yükleyin:
-
-```bash
-python -m venv venv
-source venv/bin/activate  # Windows için: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 2. 🔑 Gemini API Anahtarınızı Alın
-
-Uygulama, yapay zekâ yanıtlarını almak için Google'ın **Gemini API** servisinden faydalanır.
-
-- Ücretsiz bir API anahtarı almak için [buraya tıklayın](https://makersuite.google.com/app/apikey).
-- `.env` dosyası oluşturun ve içine aşağıdaki satırı ekleyin:
-
-```
-GEMINI_API_KEY=your_api_key_here
-```
-
-### 3. ⚙️ Uygulamayı Başlatın
-
-```bash
-uvicorn main:app --reload
-```
-
-Tarayıcıda [http://localhost:8000](http://localhost:8000) adresine giderek uygulamayı başlatabilirsiniz.
-
----
-
 ## 🎯 Uygulamanın Amacı
 
 EduAssist, öğrencilerin bireysel olarak:
@@ -79,6 +44,41 @@ EduAssist, öğrencilerin bireysel olarak:
 - **AI API:** Gemini Pro (Google)
 - **Mail Servisi:** Gmail SMTP (şifre sıfırlama)
 - **Deployment:** Lokal çalıştırma (uvicorn)
+  
+---
+
+## 🚀 Projeyi Çalıştırma Adımları
+
+Aşağıdaki adımları izleyerek uygulamayı kendi bilgisayarınızda çalıştırabilirsiniz:
+
+### 1. 📦 Gerekli Paketleri İndirin
+
+İlk olarak sanal ortamı aktif edip bağımlılıkları yükleyin:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # Windows için: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 2. 🔑 Gemini API Anahtarınızı Alın
+
+Uygulama, yapay zekâ yanıtlarını almak için Google'ın **Gemini API** servisinden faydalanır.
+
+- Ücretsiz bir API anahtarı almak için [buraya tıklayın](https://makersuite.google.com/app/apikey).
+- `.env` dosyası oluşturun ve içine aşağıdaki satırı ekleyin:
+
+```
+GEMINI_API_KEY=your_api_key_here
+```
+
+### 3. ⚙️ Uygulamayı Başlatın
+
+```bash
+uvicorn main:app --reload
+```
+
+Tarayıcıda [http://localhost:8000](http://localhost:8000) adresine giderek uygulamayı başlatabilirsiniz.
 
 ---
 
