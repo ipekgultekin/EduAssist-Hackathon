@@ -32,17 +32,15 @@ EduAssist, öğrencilerin bireysel olarak:
 - ✅ Forum sayfası: Soru paylaşma, beğeni, yorum, kaydetme
 - ✅ Şifre sıfırlama özelliği (e-posta üzerinden)
 - ✅ Dinamik kullanıcı profili sayfası
-- ✅ Türkçe ve İngilizce dil desteği (tercihli)
 
 ---
 
 ## 🧠 Kullanılan Teknolojiler
 
-- **Backend:** FastAPI
+- **Backend:** FastAPI (Python)
 - **Frontend:** HTML, CSS, JavaScript (Vanilla)
 - **Database:** SQLAlchemy
 - **AI API:** Gemini Pro (Google)
-- **Mail Servisi:** Gmail SMTP (şifre sıfırlama)
 - **Deployment:** Lokal çalıştırma (uvicorn)
   
 ---
@@ -96,7 +94,3 @@ Tarayıcıda [http://localhost:8000](http://localhost:8000) adresine giderek uyg
 📂 GitHub Repository: [https://github.com/ipekgultekin/Hackathon](https://github.com/ipekgultekin/Hackathon)
 
 ---
-
-## 📄 Lisans
-
-Bu proje açık kaynaklıdır ve MIT lisansı ile lisanslanmıştır.
