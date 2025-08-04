@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <link rel="icon" type="image/png" href="/static/images/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soru Çözümü - EduAssist</title>
@@ -261,6 +262,11 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             min-height: 200px;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
         }
 
         .result-header {
@@ -282,13 +288,6 @@
             color: #34495e;
             line-height: 1.8;
             font-size: 16px;
-        }
-
-        .result-content.empty {
-            color: #7f8c8d;
-            font-style: italic;
-            text-align: center;
-            padding: 40px 20px;
         }
 
         /* Loading Animation */
@@ -317,22 +316,43 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Navigation Buttons */
-        .nav-buttons {
+        /* Instructions Card */
+        .instructions-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .instructions-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
             display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+        .instructions-list {
+            list-style: none;
+            color: #34495e;
         }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .instructions-list li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions-list li::before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
         }
 
         /* Responsive */
@@ -352,17 +372,12 @@
                 padding: 0 15px;
             }
             
-            .form-card, .result-card {
+            .form-card, .result-card, .instructions-card {
                 padding: 25px 20px;
             }
             
             .page-title {
                 font-size: 2rem;
-            }
-            
-            .nav-buttons {
-                flex-direction: column;
-                align-items: center;
             }
         }
     </style>
@@ -375,10 +390,12 @@
                 🎓 EduAssist
             </div>
             <div class="nav-links">
-                <a href="/" class="nav-link">🏠 Ana Sayfa</a>
+                <a href="/index" class="nav-link">🏠 Ana Sayfa</a>
                 <a href="/konu" class="nav-link">📘 Konu Anlatımı</a>
                 <a href="/soru" class="nav-link active">🧠 Soru Çözümü</a>
                 <a href="/eksik" class="nav-link">🔍 Durum Tespiti</a>
+                <a href="/forum" class="nav-link">🧑‍🤝‍🧑 Forum</a>
+                <a href="/eduplan" class="nav-link">🌐 Ders Planlayıcı</a>
             </div>
         </nav>
     </header>
@@ -390,10 +407,23 @@
             <p class="page-subtitle">Fotoğraf yükleyerek sorularınızı AI ile çözün</p>
         </div>
 
+        <!-- Instructions -->
+        <div class="instructions-card">
+            <div class="instructions-title">
+                💡 Nasıl Kullanılır?
+            </div>
+            <ul class="instructions-list">
+                <li>Sorunuzun net bir fotoğrafını çekin</li>
+                <li>Fotoğrafı aşağıdaki alana yükleyin</li>
+                <li>AI sorunuzu analiz edip sizlere adım adım çözüm sunacak</li>
+                <li>Tüm dersler için kullanabilirsiniz.</li>
+            </ul>
+        </div>
+
         <div class="form-card">
             <form id="image-form" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label for="photo">📷 Fotoğraf Yükle:</label>
+                    <label for="photo">📷 Soru Fotoğrafını Yükle:</label>
                     <div class="file-upload-wrapper">
                         <div class="file-upload" id="file-upload-area">
                             <input type="file" id="photo" name="photo" accept="image/*" required>
@@ -417,12 +447,12 @@
                 </div>
 
                 <button type="submit" class="btn btn-full">
-                    ✨ Fotoğrafı Analiz Et
+                    ✨ Soruyu Çöz
                 </button>
             </form>
         </div>
 
-        <div class="result-card">
+        <div class="result-card" id="result-card">
             <div class="result-header">
                 <span>🤖</span>
                 <h3 class="result-title">AI Soru Çözümü</h3>
@@ -430,17 +460,10 @@
             
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p>AI fotoğrafınızı analiz ediyor ve soruyu çözüyor...</p>
+                <p>AI sorunuzu analiz ediyor ve çözüyor...</p>
             </div>
             
-            <div id="ai-result" class="result-content empty">
-                Henüz bir fotoğraf yüklenmedi. Yukarıdaki formu kullanarak soru fotoğrafınızı yükleyin.
-            </div>
-        </div>
-
-        <div class="nav-buttons">
-            <a href="/" class="btn btn-secondary">🏠 Ana Sayfaya Dön</a>
-            <a href="/konu" class="btn">📘 Konu Anlatımına Git</a>
+            <div id="ai-result" class="result-content"></div>
         </div>
     </div>
 
@@ -449,6 +472,7 @@
         const fileUploadArea = document.getElementById('file-upload-area');
         const imagePreview = document.getElementById('image-preview');
         const previewImg = document.getElementById('preview-img');
+        const resultCard = document.getElementById('result-card');
 
         // File upload events
         fileInput.addEventListener('change', handleFileSelect);
@@ -501,7 +525,7 @@
             content.innerHTML = `
                 <div class="file-upload-icon">✅</div>
                 <div class="file-upload-text">${fileName}</div>
-                <div class="file-upload-subtext">Dosya başarıyla yüklendi</div>
+                <div class="file-upload-subtext">Dosya başarıyla yüklendi - Analiz etmek için butona tıklayın</div>
             `;
         }
 
@@ -513,7 +537,8 @@
             const resultDiv = document.getElementById('ai-result');
             const loading = document.getElementById('loading');
             
-            // Show loading
+            // Show result card and loading
+            resultCard.classList.add('show');
             loading.classList.add('show');
             resultDiv.style.display = 'none';
             
@@ -531,28 +556,27 @@
                 
                 if (data.success) {
                     resultDiv.innerHTML = marked.parse(data.solution);
-                    resultDiv.classList.remove('empty');
                 } else {
-                    resultDiv.innerHTML = 'Bir hata oluştu: ' + data.error;
-                    resultDiv.classList.add('empty');
+                    resultDiv.innerHTML = '<div style="color: #e74c3c; text-align: center; padding: 20px;">❌ Bir hata oluştu: ' + data.error + '</div>';
                 }
             } catch (error) {
                 // Hide loading
                 loading.classList.remove('show');
                 resultDiv.style.display = 'block';
-                resultDiv.innerHTML = 'Bağlantı hatası oluştu. Lütfen tekrar deneyin.';
-                resultDiv.classList.add('empty');
+                resultDiv.innerHTML = '<div style="color: #e74c3c; text-align: center; padding: 20px;">❌ Bağlantı hatası oluştu. Lütfen tekrar deneyin.</div>';
             }
         });
 
-        // Add some interactivity
+        // Add hover effects
         fileUploadArea.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-2px)';
             this.style.transition = 'transform 0.3s ease';
         });
 
         fileUploadArea.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
+            if (!this.classList.contains('dragover')) {
+                this.style.transform = 'translateY(0)';
+            }
         });
     </script>
     <script src="/static/main.js" defer></script>

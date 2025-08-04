@@ -1,16 +1,945 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <link rel="icon" type="image/png" href="/static/images/logo.png">
     <meta charset="UTF-8">
-    <title>Profil Sayfası</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - EduAssist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Profile Layout */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            height: fit-content;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar-edit-btn:hover {
+            background: #5a6fd8;
+            transform: scale(1.1);
+        }
+
+        .profile-info {
+            text-align: center;
+        }
+
+        .profile-username {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .profile-email {
+            color: #6c757d;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(108, 117, 125, 0.2);
+            border-color: #6c757d;
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        /* My Posts Section */
+        .posts-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .post-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .post-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-category {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .post-date {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .post-content {
+            color: #495057;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 15px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(40, 167, 69, 0.95);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 10000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: rgba(220, 53, 69, 0.95);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            .profile-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .profile-card, .content-card {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                🎓 EduAssist
+            </div>
+            <div class="nav-links">
+                <a href="/index" class="nav-link">🏠 Ana Sayfa</a>
+                <a href="#" class="nav-link active">👤 Profil</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
     <div class="container">
-        <h2>👋 Hoş geldin!</h2>
-        <p>Şu anda giriş yapmış durumdasın.</p>
-        <p>Burası senin profil panelin olacak. Çalıştığın konular ve sorduğun sorular buraya eklenecek.</p>
-        <a href="/auth">Çıkış yap</a>
+        <div class="page-header">
+            <h1 class="page-title">👤 Profil</h1>
+            <p class="page-subtitle">Hesap bilgilerinizi yönetin ve aktivitelerinizi görüntüleyin</p>
+        </div>
+
+        <div class="profile-layout">
+            <!-- Profile Sidebar -->
+            <div class="profile-card">
+                <div class="profile-avatar" onclick="changeAvatar()">
+                    <span id="profile-avatar-text">A</span>
+                    <button class="avatar-edit-btn">✏️</button>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="profile-username" id="profile-username">{{ user.fullname }}</div>
+                    <div class="profile-email" id="profile-email">{{ user.email }}</div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="total-posts">0</span>
+                            <div class="stat-label">Toplam Soru</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="total-likes">0</span>
+                            <div class="stat-label">Alınan Beğeni</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="total-comments">0</span>
+                            <div class="stat-label">Yapılan Yorum</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="total-saves">0</span>
+                            <div class="stat-label">Kaydedilen</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Settings Card -->
+                <div class="content-card">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('settings')">⚙️ Ayarlar</button>
+                        <button class="tab" onclick="switchTab('posts')">📝 Sorularım</button>
+                        <button class="tab" onclick="switchTab('saved')">📌 Kaydedilenler</button>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div id="settings-tab" class="tab-content active">
+                        <form id="settings-form">
+                            <div class="form-group">
+                                <label class="form-label">👤 Kullanıcı Adı</label>
+                                <input type="text" class="form-input" id="username-input" placeholder="Kullanıcı adınızı girin">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">📧 E-posta Adresi</label>
+                                <input type="email" class="form-input" id="email-input" placeholder="E-posta adresinizi girin">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">🔒 Mevcut Şifre</label>
+                                <input type="password" class="form-input" id="current-password" placeholder="Mevcut şifrenizi girin">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">🔑 Yeni Şifre</label>
+                                <input type="password" class="form-input" id="new-password" placeholder="Yeni şifrenizi girin">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">🔑 Yeni Şifre Tekrar</label>
+                                <input type="password" class="form-input" id="confirm-password" placeholder="Yeni şifrenizi tekrar girin">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">🌍 Dil Tercihi</label>
+                                <select class="form-select" id="language-select">
+                                    <option value="tr">🇹🇷 Türkçe</option>
+                                    <option value="en">🇺🇸 English</option>
+
+                                </select>
+                            </div>
+
+                            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                                <button type="submit" class="btn">
+                                    💾 Değişiklikleri Kaydet
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                    🔄 Sıfırla
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- My Posts Tab -->
+                    <div id="posts-tab" class="tab-content">
+                        <div class="posts-grid" id="my-posts-list">
+                            <!-- User's posts will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Saved Posts Tab -->
+                    <div id="saved-tab" class="tab-content">
+                        <div class="posts-grid" id="saved-posts-list">
+                            <!-- Saved posts will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Notification Container -->
+     
+    <div id="notification" class="notification"></div>
+    <script>
+    const serverUser = JSON.parse('{{ user | tojson | safe }}');
+    localStorage.setItem('currentUser', JSON.stringify(serverUser));
+    </script>
+
+    <script>
+        
+        // Kullanıcı verileri
+        const currentUser = {
+            id: "{{ user.id if user else '' }}",
+            username: "{{ user.username if user else 'Misafir' }}",
+            avatar: "{{ user.fullname[0].upper() if user else '?' }}"
+        };
+
+        // Kategori bilgileri
+        const categoryInfo = {
+            matematik: { emoji: '🧮', name: 'Matematik' },
+            fizik: { emoji: '⚛️', name: 'Fizik' },
+            kimya: { emoji: '🔬', name: 'Kimya' },
+            biyoloji: { emoji: '🌱', name: 'Biyoloji' },
+            tarih: { emoji: '📜', name: 'Tarih' },
+            cografya: { emoji: '🌍', name: 'Coğrafya' },
+            edebiyat: { emoji: '📖', name: 'Edebiyat' },
+            dil: { emoji: '🗣️', name: 'Yabancı Dil' },
+            diger: { emoji: '❓', name: 'Diğer' }
+        };
+
+        // DOM elementleri
+        const profileAvatarText = document.getElementById('profile-avatar-text');
+        const profileUsername = document.getElementById('profile-username');
+        const profileEmail = document.getElementById('profile-email');
+        const usernameInput = document.getElementById('username-input');
+        const emailInput = document.getElementById('email-input');
+        const languageSelect = document.getElementById('language-select');
+        const settingsForm = document.getElementById('settings-form');
+
+        // Sayfa yüklendiğinde çalışacak fonksiyonlar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserProfile();
+            loadUserStats();
+            loadUserPosts();
+            loadSavedPosts();
+        });
+
+        // Kullanıcı profilini yükle
+        function loadUserProfile() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                Object.assign(currentUser, user);
+            }
+
+            profileAvatarText.textContent = currentUser.avatar;
+            profileUsername.textContent = currentUser.username;
+            profileEmail.textContent = currentUser.email;
+            usernameInput.value = currentUser.username;
+            emailInput.value = currentUser.email;
+            languageSelect.value = currentUser.language || 'tr';
+        }
+
+        // Kullanıcı istatistiklerini yükle
+        function loadUserStats() {
+            const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+            
+            // Kullanıcının postları
+            const userPosts = posts.filter(post => post.user.id === currentUser.id);
+            
+            // Toplam beğeni sayısı
+            const totalLikes = userPosts.reduce((sum, post) => sum + post.likes, 0);
+            
+            // Toplam yorum sayısı (kullanıcının yaptığı yorumlar)
+            const totalComments = posts.reduce((sum, post) => {
+                const userComments = post.comments.filter(comment => comment.user.id === currentUser.id);
+                return sum + userComments.length;
+            }, 0);
+            
+            // Kaydedilen postlar
+            const savedPosts = posts.filter(post => post.savedBy.includes(currentUser.id));
+
+            document.getElementById('total-posts').textContent = userPosts.length;
+            document.getElementById('total-likes').textContent = totalLikes;
+            document.getElementById('total-comments').textContent = totalComments;
+            document.getElementById('total-saves').textContent = savedPosts.length;
+        }
+
+        // Kullanıcının postlarını yükle
+        function loadUserPosts() {
+            const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+            const userPosts = posts.filter(post => post.user.id === currentUser.id);
+            const myPostsList = document.getElementById('my-posts-list');
+
+            if (userPosts.length === 0) {
+                myPostsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <div class="empty-state-text">Henüz hiç soru paylaşmadınız</div>
+                    </div>
+                `;
+                return;
+            }
+
+            myPostsList.innerHTML = userPosts.map(post => createPostItemHTML(post)).join('');
+        }
+
+        // Kaydedilen postları yükle
+        function loadSavedPosts() {
+            const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+            const savedPosts = posts.filter(post => post.savedBy.includes(currentUser.id));
+            const savedPostsList = document.getElementById('saved-posts-list');
+
+            if (savedPosts.length === 0) {
+                savedPostsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📌</div>
+                        <div class="empty-state-text">Henüz hiç gönderi kaydetmediniz</div>
+                    </div>
+                `;
+                return;
+            }
+
+            savedPostsList.innerHTML = savedPosts.map(post => createPostItemHTML(post)).join('');
+        }
+
+        // Post item HTML'i oluştur
+        function createPostItemHTML(post) {
+            const categoryEmoji = categoryInfo[post.category].emoji;
+            const categoryName = categoryInfo[post.category].name;
+
+            return `
+                <div class="post-item">
+                    <div class="post-meta">
+                        <div class="post-category">${categoryEmoji} ${categoryName}</div>
+                        <div class="post-date">${formatTime(post.timestamp)}</div>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-stats">
+                        <span>👍 ${post.likes}</span>
+                        <span>💬 ${post.comments.length}</span>
+                        <span>📌 ${post.saves}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Zamanı formatla
+        function formatTime(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diff = now - time;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (days > 0) return `${days} gün önce`;
+            if (hours > 0) return `${hours} saat önce`;
+            if (minutes > 0) return `${minutes} dakika önce`;
+            return 'Az önce';
+        }
+
+        // Tab değiştir
+        function switchTab(tabName) {
+            // Tüm tabları pasif yap
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Seçilen tabı aktif yap
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            // Tab değiştiğinde verileri yenile
+            if (tabName === 'posts') {
+                loadUserPosts();
+            } else if (tabName === 'saved') {
+                loadSavedPosts();
+            }
+        }
+
+        // Avatar değiştir
+        function changeAvatar() {
+            const newAvatar = prompt('Yeni avatar harfinizi girin:', currentUser.avatar);
+            if (newAvatar && newAvatar.length === 1) {
+                currentUser.avatar = newAvatar.toUpperCase();
+                profileAvatarText.textContent = currentUser.avatar;
+                saveUserProfile();
+                showNotification('Avatar başarıyla güncellendi! 👤', 'success');
+            }
+        }
+
+        // Ayarlar formunu gönder
+        settingsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newUsername = usernameInput.value.trim();
+            const newEmail = emailInput.value.trim();
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const newLanguage = languageSelect.value;
+
+            // Validasyonlar
+            if (!newUsername || !newEmail) {
+                showNotification('Kullanıcı adı ve e-posta zorunludur!', 'error');
+                return;
+            }
+
+            if (newPassword && newPassword !== confirmPassword) {
+                showNotification('Yeni şifreler eşleşmiyor!', 'error');
+                return;
+            }
+
+            if (newPassword && newPassword.length < 6) {
+                showNotification('Şifre en az 6 karakter olmalıdır!', 'error');
+                return;
+            }
+
+            // Kullanıcı bilgilerini güncelle
+            currentUser.username = newUsername;
+            currentUser.email = newEmail;
+            currentUser.language = newLanguage;
+
+            // Profil bilgilerini güncelle
+            profileUsername.textContent = newUsername;
+            profileEmail.textContent = newEmail;
+
+            // Forum verilerindeki kullanıcı bilgilerini güncelle
+            updateUserInPosts();
+
+            // Kullanıcı profilini kaydet
+            saveUserProfile();
+
+            // Şifre alanlarını temizle
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+
+            showNotification('Ayarlar başarıyla güncellendi! ✅', 'success');
+        });
+
+        // Forum verilerindeki kullanıcı bilgilerini güncelle
+        function updateUserInPosts() {
+            const posts = JSON.parse(localStorage.getItem('forumPosts')) || [];
+            
+            posts.forEach(post => {
+                // Post sahibi ise bilgilerini güncelle
+                if (post.user.id === currentUser.id) {
+                    post.user.username = currentUser.username;
+                    post.user.avatar = currentUser.avatar;
+                }
+                
+                // Yorumlardaki kullanıcı bilgilerini güncelle
+                post.comments.forEach(comment => {
+                    if (comment.user.id === currentUser.id) {
+                        comment.user.username = currentUser.username;
+                        comment.user.avatar = currentUser.avatar;
+                    }
+                });
+            });
+
+            localStorage.setItem('forumPosts', JSON.stringify(posts));
+        }
+
+        // Kullanıcı profilini kaydet
+        function saveUserProfile() {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+
+        // Formu sıfırla
+        function resetForm() {
+            loadUserProfile();
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+            showNotification('Form sıfırlandı', 'success');
+        }
+
+        // Bildirim göster
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            
+            if (type === 'error') {
+                notification.classList.add('error');
+            } else {
+                notification.classList.remove('error');
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Global fonksiyonlar
+        window.switchTab = switchTab;
+        window.changeAvatar = changeAvatar;
+        window.resetForm = resetForm;
+
+        // Sayfa yüklendiğinde kullanıcı verilerini güncelle
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'forumPosts') {
+                loadUserStats();
+                loadUserPosts();
+                loadSavedPosts();
+            }
+        });
+
+        // Periyodik olarak istatistikleri güncelle
+        setInterval(() => {
+            loadUserStats();
+        }, 5000);
+        
+    </script>
 </body>
 </html>

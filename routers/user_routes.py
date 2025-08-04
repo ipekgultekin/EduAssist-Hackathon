@@ -5,7 +5,8 @@ from fastapi import Response
 from models.user import User
 from sqlalchemy.orm import Session
 from database import SessionLocal
-
+from routers.utils import get_current_user
+from fastapi.encoders import jsonable_encoder
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -62,10 +63,26 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
 
 
 @router.get("/profile")
-def profile_page(request: Request):
-    return templates.TemplateResponse("profile.html", {"request": request})
+def profile_page(request: Request, db: Session = Depends(get_db)):
+    from routers.utils import get_current_user
+    from fastapi.encoders import jsonable_encoder
+
+    user = get_current_user(request, db)
+    if not user:
+        return RedirectResponse(url="/auth", status_code=302)
+
+    user_data = jsonable_encoder(user)
+    return templates.TemplateResponse("profile.html", {"request": request, "user": user_data})
+
 
 @router.get("/logout")
 def logout_user(response: Response):
     response.delete_cookie("user_id")
-    return RedirectResponse(url="/", status_code=302) 
+    return RedirectResponse(url="/", status_code=302)
+
+@router.get("/forum")
+def forum_page(request: Request, db: Session = Depends(get_db)):
+    user = get_current_user(request, db)
+    if not user:
+        return RedirectResponse(url="/auth", status_code=302)
+    return templates.TemplateResponse("forum.html", {"request": request, "user": user})
