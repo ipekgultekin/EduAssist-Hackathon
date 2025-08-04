@@ -86,8 +86,8 @@ Tarayıcıda [http://localhost:8000](http://localhost:8000) adresine giderek uyg
 
 | İsim | Rol |
 |------|-----|
-| [İpek Gültekin](https://github.com/ipekgultekin) | Backend & UI Geliştirici |
-| Yusuf Mert Genç | AI & Forum Mantığı |
+| [İpek Gültekin](https://github.com/ipekgultekin) | Developer |
+| [Yusuf Mert Genç](https://github.com/YusufMertGenc) | Product Owner, Developer |
 
 ---
 
