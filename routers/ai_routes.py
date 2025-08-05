@@ -1,5 +1,4 @@
-from fastapi import APIRouter, UploadFile, File
-from models.schemas import EducationRequest
+from fastapi import APIRouter, UploadFile, File, Request
 from fastapi.responses import JSONResponse
 import os
 import requests
@@ -11,31 +10,42 @@ router = APIRouter()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 @router.post("/educational-ai")
-def educational_response(data: EducationRequest):
-    if data.mode == "konu_anlatimi":
-        prompt = f"Lütfen {data.topic} konusunu detaylı ama sade bir şekilde anlat. Cevabı {data.lang} dilinde ver."
+async def educational_response(request: Request):
+    data = await request.json()
+    topic = data.get("topic", "")
+    lang = data.get("lang", "Türkçe")
+    mode = data.get("mode", "")
 
-    elif data.mode == "soru_cozumu":
-        prompt = f"{data.question} sorusunu detaylı bir şekilde çöz ve açıklamalar yap. Konu: {data.topic}. Cevabı {data.lang} dilinde ver."
+    question = data.get("question")
+    step = data.get("step", 0)
+    answer = data.get("answer")
 
-    elif data.mode == "eksik_tespit":
-        prompt = f"{data.topic} konusuyla ilgili bana birkaç zorlayıcı soru sor. Benim cevaplarıma göre eksiklerimi tespit et. Cevapları {data.lang} dilinde ver."
+    if mode == "konu_anlatimi":
+        prompt = f"{topic} konusunu sade ve anlaşılır bir şekilde açıkla. Lütfen {lang} dilinde yaz."
 
-    elif data.mode == "get_question":
-        prompt = f"{data.topic} konusuyla ilgili {data.step + 1}. sıradaki anlamayı ölçen zorlayıcı tek bir soru sor. Sadece soruyu ver. {data.lang} dilinde sor."
+    elif mode == "soru_cozumu":
+        prompt = f"Soru: {question}\nKonu: {topic}\nLütfen adım adım çözümünü {lang} dilinde yaz."
 
-    elif data.mode == "eksik_test":
+    elif mode == "eksik_tespit":
+        prompt = f"{topic} konusuyla ilgili bana birkaç zorlayıcı soru sor. Benim cevaplarıma göre eksiklerimi tespit et. Cevapları {lang} dilinde ver."
+
+    elif mode == "get_question":
+        prompt = f"{lang} dilinde, {topic} konusunda öğrencinin konuyu anlayıp anlamadığını ölçen {step + 1}. sıradaki zorlayıcı bir soru yaz. Yalnızca soruyu ver."
+
+    elif mode == "eduplan":
+        prompt = f"Kullanıcının hedefi şu: {topic}. Bu hedefe yönelik detaylı, sade ve hedefe yönelik bir ders çalışma planı hazırla. Cevabı {lang} dilinde ver."
+
+    elif mode == "eksik_test":
         prompt = (
-            f"Aşağıda {data.topic} konusuyla ilgili {data.step + 1}. soru var. "
-            f"Kullanıcının verdiği cevap da altında. Bu cevabı değerlendir. "
-            f"Aşağıdaki formatta çok kısa cevap ver:\n"
-            f"Doğru/Yanlış: [Doğru ya da Yanlış yaz]\n"
-            f"Açıklama: [Kısa açıklama yap]\n\n"
-            f"Soru: {data.question}\nCevap: {data.answer}\nDil: {data.lang}"
+            f"{topic} konusu\nSoru {step + 1}: {question}\n"
+            f"Öğrencinin cevabı: {answer}\n"
+            f"Cevabı değerlendir. Format:\n"
+            f"Doğru/Yanlış: ...\nAçıklama: ...\nDil: {lang}"
         )
 
+
     else:
-        return {"error": "Invalid mode"}
+        return {"error": "Geçersiz mod"}
 
     response = requests.post(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
@@ -45,35 +55,49 @@ def educational_response(data: EducationRequest):
     )
 
     result = response.json()
+    print("MODE:", mode)
+    print("PROMPT:", prompt)
+    print("RESPONSE:", result)
 
     try:
-        ai_text = result["candidates"][0]["content"]["parts"][0]["text"]
+        candidates = result.get("candidates")
+        if not candidates:
+            raise ValueError("Gemini API yanıtında candidates yok")
 
-        if data.mode == "eksik_test":
+        content = candidates[0].get("content", {})
+        parts = content.get("parts", [])
+        if not parts:
+            raise ValueError("Gemini API yanıtında content.parts yok")
+
+        ai_text = parts[0].get("text", "")
+        if not ai_text:
+            raise ValueError("AI cevabı boş döndü")
+
+        if mode == "eksik_test":
             lines = ai_text.strip().split("\n")
             correctness_line = lines[0].lower()
             explanation = "\n".join(lines[1:]).strip()
-
             is_correct = "doğru" in correctness_line and "yanlış" not in correctness_line
-
             return {
                 "correct": is_correct,
                 "feedback": explanation if explanation else ai_text
             }
 
-        elif data.mode == "get_question":
+        elif mode == "get_question":
             return {"question": ai_text}
 
         else:
-            return {"response": ai_text}
+            return {"solution": ai_text}
 
     except Exception as e:
-        return {"error": "AI response error", "raw": result}
-
+        print("Gemini parse hatası:", e)
+        return {
+            "error": "AI response error",
+            "raw": result
+        }
 
 @router.post("/image-question")
 async def solve_image_question(photo: UploadFile = File(...)):
-    # Görseli oku ve base64'e çevir
     image_bytes = await photo.read()
     encoded_image = base64.b64encode(image_bytes).decode('utf-8')
 
@@ -111,17 +135,15 @@ async def solve_image_question(photo: UploadFile = File(...)):
     )
 
     result = response.json()
-    print("Gemini response:", result)  # 🔍 buraya eklenecek
+    print("Gemini image response:", result)
 
     try:
         ai_text = result["candidates"][0]["content"]["parts"][0]["text"]
         return {"success": True, "solution": ai_text}
     except Exception as e:
         print("AI çözüm parse edilemedi:", e)
-        print("Orijinal Gemini sonucu:", result)
         return {
             "success": False,
             "error": "AI response error",
             "raw": result
         }
-

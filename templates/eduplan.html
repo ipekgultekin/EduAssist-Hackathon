@@ -424,132 +424,124 @@
         </div>
     </div>
 
-    <script>
-        let messageCount = 0;
+   <!-- En alt <script> bloğunda şu kodu replace ettim -->
+<script>
+    let messageCount = 0;
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
         }
+    }
 
-        function sendMessage() {
-            const input = document.getElementById("user-input");
-            const message = input.value.trim();
-            if (!message) return;
+    async function sendMessage() {
+        const input = document.getElementById("user-input");
+        const message = input.value.trim();
+        if (!message) return;
 
-            const chatBox = document.getElementById("chat-box");
-            const sendBtn = document.getElementById("send-btn");
-            const typingIndicator = document.getElementById("typing-indicator");
-            
-            // Add user message
-            const userMessage = document.createElement('div');
-            userMessage.className = 'chat-message user';
-            userMessage.innerHTML = `
-                <div class="message-sender">👤 Sen</div>
-                <div class="message-content">${message}</div>
+        const chatBox = document.getElementById("chat-box");
+        const sendBtn = document.getElementById("send-btn");
+        const typingIndicator = document.getElementById("typing-indicator");
+
+        // Kullanıcı mesajını göster
+        const userMessage = document.createElement('div');
+        userMessage.className = 'chat-message user';
+        userMessage.innerHTML = `
+            <div class="message-sender">👤 Sen</div>
+            <div class="message-content">${message}</div>
+        `;
+        chatBox.appendChild(userMessage);
+
+        input.value = "";
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '⏳ Gönderiliyor...';
+        typingIndicator.classList.add('show');
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // AI API çağrısı
+        const payload = {
+            topic: message,
+            lang: "Türkçe",
+            mode: "eduplan"
+        };
+
+        try {
+            const response = await fetch("/educational-ai", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            const aiPlan = data.solution || data.error || "AI cevabı alınamadı.";
+
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'chat-message ai';
+            aiMessage.innerHTML = `
+                <div class="message-sender">🤖 AI Asistan</div>
+                <div class="message-content">${aiPlan.replace(/\n/g, "<br>")}</div>
             `;
-            chatBox.appendChild(userMessage);
-            
-            // Clear input and disable button
-            input.value = "";
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = '⏳ Gönderiliyor...';
-            
-            // Show typing indicator
-            typingIndicator.classList.add('show');
+            chatBox.appendChild(aiMessage);
+        } catch (error) {
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'chat-message ai';
+            errorMessage.innerHTML = `
+                <div class="message-sender">❌ Hata</div>
+                <div class="message-content">AI planı oluşturulamadı. Lütfen tekrar deneyin.</div>
+            `;
+            chatBox.appendChild(errorMessage);
+            console.error("Planlama AI hatası:", error);
+        }
+
+        typingIndicator.classList.remove('show');
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '📤 Gönder';
+        chatBox.scrollTop = chatBox.scrollHeight;
+        messageCount++;
+    }
+
+    function downloadPDF() {
+        if (messageCount === 0) {
+            alert("🤔 Henüz bir plan oluşturulmadı. Önce hedefinizi söyleyin!");
+            return;
+        }
+        alert("📄 PDF indirme özelliği yakında eklenecek!");
+    }
+
+    function newPlan() {
+        const chatBox = document.getElementById("chat-box");
+        const input = document.getElementById("user-input");
+
+        // İlk AI mesajı hariç temizle
+        const firstMessage = chatBox.querySelector('.chat-message.ai');
+        chatBox.innerHTML = '';
+        chatBox.appendChild(firstMessage);
+
+        input.value = '';
+        messageCount = 0;
+
+        // Yeni mesaj
+        setTimeout(() => {
+            const newMessage = document.createElement('div');
+            newMessage.className = 'chat-message ai';
+            newMessage.innerHTML = `
+                <div class="message-sender">🤖 AI Asistan</div>
+                <div class="message-content">🔄 Yeni plan hazırlamaya başlayalım! Yeni hedefinizi ve sürenizi söyleyin.</div>
+            `;
+            chatBox.appendChild(newMessage);
             chatBox.scrollTop = chatBox.scrollHeight;
+        }, 500);
+    }
 
-            // Simulate AI response
-            setTimeout(() => {
-                typingIndicator.classList.remove('show');
-                
-                const aiResponse = generateAIResponse(message);
-                const aiMessage = document.createElement('div');
-                aiMessage.className = 'chat-message ai';
-                aiMessage.innerHTML = `
-                    <div class="message-sender">🤖 AI Asistan</div>
-                    <div class="message-content">${aiResponse}</div>
-                `;
-                chatBox.appendChild(aiMessage);
-                
-                // Re-enable button
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = '📤 Gönder';
-                
-                chatBox.scrollTop = chatBox.scrollHeight;
-                messageCount++;
-            }, 2000 + Math.random() * 1000);
-        }
+    // UI etkileri
+    document.getElementById('user-input').addEventListener('focus', function () {
+        this.style.transform = 'scale(1.02)';
+    });
 
-        function generateAIResponse(userMessage) {
-            const responses = [
-                `🎯 Harika! "${userMessage}" hedefin için detaylı bir plan hazırladım:<br><br>
-                📅 <strong>1. Hafta:</strong><br>
-                • Gün 1-2: Temel kavramlar + 10 soru<br>
-                • Gün 3-4: Uygulama soruları + 15 soru<br>
-                • Gün 5-7: Pekiştirme + 20 soru<br><br>
-                📊 Günlük 2 saat çalışman yeterli olacak!`,
-                
-                `✨ Mükemmel hedef! İşte senin için özel plan:<br><br>
-                📚 <strong>Bu Hafta:</strong><br>
-                • ${Math.floor(Math.random() * 5 + 10)} soru çöz<br>
-                • ${Math.floor(Math.random() * 3 + 2)} konu tekrarı yap<br>
-                • ${Math.floor(Math.random() * 2 + 1)} deneme sınavı<br><br>
-                🎯 Hedefine ulaşman için günde ${Math.floor(Math.random() * 2 + 2)} saat yeterli!`,
-                
-                `🚀 Süper! Hedefiniz çok net. Size özel program:<br><br>
-                📈 <strong>İlerleme Planı:</strong><br>
-                • İlk 10 gün: Temel düzey<br>
-                • Sonraki 10 gün: Orta düzey<br>
-                • Son 10 gün: İleri düzey<br><br>
-                💪 Bu tempoda devam edersen başarılı olacaksın!`
-            ];
-            
-            return responses[Math.floor(Math.random() * responses.length)];
-        }
+    document.getElementById('user-input').addEventListener('blur', function () {
+        this.style.transform = 'scale(1)';
+    });
+</script>
 
-        function downloadPDF() {
-            if (messageCount === 0) {
-                alert("🤔 Henüz bir plan oluşturulmadı. Önce hedefinizi söyleyin!");
-                return;
-            }
-            alert("📄 PDF indirme özelliği yakında eklenecek!");
-        }
-
-        function newPlan() {
-            const chatBox = document.getElementById("chat-box");
-            const input = document.getElementById("user-input");
-            
-            // Clear chat except first message
-            const firstMessage = chatBox.querySelector('.chat-message.ai');
-            chatBox.innerHTML = '';
-            chatBox.appendChild(firstMessage);
-            
-            input.value = '';
-            messageCount = 0;
-            
-            // Add new plan message
-            setTimeout(() => {
-                const newMessage = document.createElement('div');
-                newMessage.className = 'chat-message ai';
-                newMessage.innerHTML = `
-                    <div class="message-sender">🤖 AI Asistan</div>
-                    <div class="message-content">🔄 Yeni plan hazırlamaya başlayalım! Yeni hedefinizi ve sürenizi söyleyin.</div>
-                `;
-                chatBox.appendChild(newMessage);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 500);
-        }
-
-        // Add some interactivity
-        document.getElementById('user-input').addEventListener('focus', function() {
-            this.style.transform = 'scale(1.02)';
-        });
-
-        document.getElementById('user-input').addEventListener('blur', function() {
-            this.style.transform = 'scale(1)';
-        });
-    </script>
 </body>
 </html>

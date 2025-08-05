@@ -11,7 +11,7 @@ document.getElementById("eksik-form").addEventListener("submit", async function 
     selectedTopic = document.getElementById("topic").value;
     selectedLang = document.getElementById("lang").value;
     document.getElementById("qa-box").style.display = "block";
-    document.getElementById("eksik-form").style.display = "none";
+    document.getElementById("start-form").style.display = "none";
     await askNextQuestion();
 });
 
@@ -28,31 +28,48 @@ document.getElementById("answer-btn").addEventListener("click", async function (
         question: currentQuestionText
     };
 
-    const res = await fetch("/educational-ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    });
+    try {
+        const res = await fetch("/educational-ai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
 
-    const data = await res.json();
-    const feedback = document.getElementById("feedback");
+        const data = await res.json();
+        const feedback = document.getElementById("feedback");
 
-    if (data.correct) {
-        correctAnswers++;
-        feedback.innerText = "✅ Doğru: " + data.feedback;
-    } else {
-        incorrectAnswers++;
-        feedback.innerText = "❌ Yanlış: " + data.feedback;
-    }
-
-    currentQuestion++;
-    setTimeout(async () => {
-        if (currentQuestion < totalQuestions) {
-            await askNextQuestion();
+        if (data.correct) {
+            correctAnswers++;
+            feedback.className = "feedback-box show correct";
+            feedback.innerHTML = `
+                <div style="margin-bottom: 10px;"><strong>✅ Doğru cevap!</strong></div>
+                <div style="padding: 10px; background: rgba(0, 128, 0, 0.1); border-left: 4px solid #28a745; border-radius: 8px;">
+                    ${data.feedback}
+                </div>
+            `;
         } else {
-            finishSession();
+            incorrectAnswers++;
+            feedback.className = "feedback-box show incorrect";
+            feedback.innerHTML = `
+                <div style="margin-bottom: 10px;"><strong>❌ Yanlış cevap</strong></div>
+                <div style="padding: 10px; background: rgba(255, 0, 0, 0.05); border-left: 4px solid #dc3545; border-radius: 8px;">
+                    ${data.feedback}
+                </div>
+            `;
         }
-    }, 2000);
+
+        currentQuestion++;
+        setTimeout(async () => {
+            if (currentQuestion < totalQuestions) {
+                await askNextQuestion();
+            } else {
+                finishSession();
+            }
+        }, 2000);
+
+    } catch (err) {
+        console.error("Cevap gönderilirken hata oluştu:", err);
+    }
 });
 
 async function askNextQuestion() {
@@ -63,31 +80,63 @@ async function askNextQuestion() {
         step: currentQuestion
     };
 
-    const res = await fetch("/educational-ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    });
+    try {
+        const res = await fetch("/educational-ai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
 
-    const data = await res.json();
-    currentQuestionText = data.question;
-    document.getElementById("question").innerText = "Soru " + (currentQuestion + 1) + ": " + currentQuestionText;
-    document.getElementById("user-answer").value = "";
-    document.getElementById("feedback").innerText = "";
+        const data = await res.json();
+        const questionBox = document.getElementById("question");
+
+        if (data.question) {
+            currentQuestionText = data.question;
+            questionBox.innerText = "Soru " + (currentQuestion + 1) + ": " + currentQuestionText;
+        } else {
+            console.error("AI'dan soru alınamadı:", data);
+            currentQuestionText = "AI şu anda soruyu üretemedi.";
+            questionBox.innerText = `⚠️ Soru ${currentQuestion + 1}: ${currentQuestionText}`;
+        }
+
+        document.getElementById("user-answer").value = "";
+        const feedbackBox = document.getElementById("feedback");
+        feedbackBox.innerText = "";
+        feedbackBox.className = "feedback-box";
+
+        const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+        document.getElementById("progress-fill").style.width = progress + "%";
+        document.getElementById("progress-text").innerText = `Soru ${currentQuestion + 1} / ${totalQuestions}`;
+        document.getElementById("progress-container").classList.add("show");
+        document.getElementById("qa-box").classList.add("show");
+
+    } catch (error) {
+        console.error("askNextQuestion() hata:", error);
+        document.getElementById("question").innerText = "⚠️ AI ile bağlantı kurulamadı.";
+    }
 }
 
 function finishSession() {
     document.getElementById("question").innerText = "";
-    document.getElementById("user-answer").style.display = "none";
+
+    const answerBox = document.getElementById("user-answer");
+    answerBox.disabled = true;
+    answerBox.value = "Test tamamlandı. Cevap veremezsiniz.";
+    answerBox.style.opacity = "0.6";
+    answerBox.style.cursor = "not-allowed";
+
     document.getElementById("answer-btn").style.display = "none";
-    document.getElementById("feedback").innerHTML =
-        `✅ Doğru: ${correctAnswers}, ❌ Yanlış: ${incorrectAnswers}<br>` +
-        `🧠 Değerlendirme: ${generateFeedback()}`;
 
-    // Artık result-box yok, hata engellendi
-    // document.getElementById("result-box").style.display = "none";
+    const feedback = document.getElementById("feedback");
+    const overallClass = correctAnswers >= 3 ? "correct" : "incorrect";
+    feedback.className = `feedback-box show ${overallClass}`;
+    feedback.innerHTML = `
+        <div style="margin-bottom: 10px;">✅ Doğru: ${correctAnswers}, ❌ Yanlış: ${incorrectAnswers}</div>
+        <div style="padding: 10px; background: #f8d7da; border-left: 4px solid #dc3545; border-radius: 8px;">
+            🧠 Değerlendirme: ${generateFeedback()}
+        </div>
+    `;
 
-    // Ana sayfa butonunu göster
     document.getElementById("summary-actions").style.display = "block";
 }
 
