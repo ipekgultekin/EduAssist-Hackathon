@@ -67,6 +67,7 @@ async def eksik_page(request: Request):
 @app.get("/eduplan", response_class=HTMLResponse)
 async def eduplan_page(request: Request):
     return templates.TemplateResponse("eduplan.html", {"request": request})
+    
 
 Base.metadata.create_all(bind=engine)
 
