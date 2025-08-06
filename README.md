@@ -80,6 +80,11 @@ uvicorn main:app --reload
 Tarayıcıda [http://localhost:8000](http://localhost:8000) adresine giderek uygulamayı başlatabilirsiniz.
 
 ---
+## 🎥 Uygulama Tanıtım Videosu
+
+https://www.youtube.com/watch?v=jOMa7jDV78E
+
+---
 
 ## 📸 Uygulama Görselleri
 <img width="1897" height="867" alt="Ekran görüntüsü 2025-08-05 232709" src="https://github.com/user-attachments/assets/4293466f-0e78-4ac3-ae8a-06045eaeaa9b" />
