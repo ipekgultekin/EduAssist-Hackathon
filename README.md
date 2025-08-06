@@ -1,3 +1,4 @@
+#  Takım : printf("İpek & Mert");
 # 🎓 EduAssist - Yapay Zekâ Destekli Eğitim Asistanı
 
 **EduAssist**, öğrencilerin bireysel öğrenme süreçlerini destekleyen çok sayfalı, modern ve yapay zekâ tabanlı bir web uygulamasıdır. Kullanıcılar, konuları yapay zekâdan dinleyebilir, sorularını çözümletip açıklamalar alabilir, eksik olduğu alanları analiz edebilir ve diğer kullanıcılarla forum üzerinden etkileşim kurabilir.
